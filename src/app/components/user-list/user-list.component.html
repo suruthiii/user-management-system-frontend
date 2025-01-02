@@ -1,0 +1,65 @@
+<div class="container mx-auto p-6">
+  <h2 class="text-2xl font-bold text-gray-800 mb-4">User Management</h2>
+
+  <div class="flex justify-between items-center mb-6">
+    <button 
+      class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded shadow"
+      (click)="onLogout()">
+      Logout
+    </button>
+  </div>
+
+  <div class="mb-4">
+    <button 
+      class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded shadow"
+      (click)="onAddUser()">
+      Add New User
+    </button>
+  </div>
+
+  <div class="overflow-x-auto">
+    <table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
+      <thead>
+        <tr class="bg-gray-100 text-left text-sm uppercase font-medium text-gray-600">
+          <th class="py-3 px-6">ID</th>
+          <th class="py-3 px-6">Name</th>
+          <th class="py-3 px-6">Phone Number</th>
+          <th class="py-3 px-6">Email</th>
+          <th class="py-3 px-6">Gender</th>
+          <th class="py-3 px-6">Date of Birth</th>
+          <th class="py-3 px-6">Status</th>
+          <th class="py-3 px-6">Role</th>
+          <th class="py-3 px-6">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of users" class="hover:bg-gray-50">
+          <td class="py-3 px-6">{{ user.id }}</td>
+          <td class="py-3 px-6">{{ user.name }}</td>
+          <td class="py-3 px-6">{{ user.phoneNumber }}</td>
+          <td class="py-3 px-6">{{ user.email }}</td>
+          <td class="py-3 px-6">{{ user.gender }}</td>
+          <td class="py-3 px-6">{{ user.dateOfBirth }}</td>
+          <td class="py-3 px-6">{{ user.status }}</td>
+          <td class="py-3 px-6">{{ user.userRole.name }}</td>
+          <td class="py-3 px-6">
+            <div class="flex space-x-2">
+              <button 
+                class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold text-xs py-2 px-4 rounded shadow"
+                (click)="onEditUser(user.id)">
+                Edit
+              </button>
+              <button 
+                class="bg-red-500 hover:bg-red-600 text-white font-semibold text-xs py-2 px-4 rounded shadow"
+                (click)="onDeleteUser(user.id)">
+                Delete
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p *ngIf="users.length === 0" class="text-center text-gray-500 mt-4">No users found.</p>
+</div>
