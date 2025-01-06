@@ -4,7 +4,7 @@ export interface User {
   email: string;
   password: string;
   phoneNumber: string;
-  gender: "MALE" | "FEMALE";  // Adjust gender to accept both "MALE" and "FEMALE"
+  gender: "MALE" | "FEMALE";
   dateOfBirth: string;
   status: "ACTIVE" | "PENDING";
   userRoleId: number;

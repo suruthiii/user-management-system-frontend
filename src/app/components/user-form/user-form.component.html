@@ -1,4 +1,12 @@
 <div class="max-w-lg mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
+  <!-- Error message display -->
+  <div 
+    *ngIf="errorMessage" 
+    class="text-red-500 bg-red-100 border border-red-500 p-2 rounded-lg mb-4"
+  >
+    {{ errorMessage }}
+  </div>
+
   <form (ngSubmit)="onSubmit()" class="space-y-6">
     <h2 class="text-2xl font-bold text-center mb-4">
       {{ isEdit ? 'Edit User' : 'Add User' }}

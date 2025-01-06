@@ -8,6 +8,7 @@ interface LoginResponse {
   token: string;
   refreshToken: string;
   expirationTime: string;
+  role: string;
 }
 
 interface UserInfo {
@@ -24,18 +25,15 @@ export class AuthService {
   private axiosInstance: AxiosInstance;
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {
-    // Initialize axios instance
     this.axiosInstance = axios.create({
-      baseURL: 'http://your-backend-api.com' // Replace with your API base URL
+      baseURL: 'http://localhost:8080'
     });
 
-    // Check if running in browser before accessing localStorage
     const storedUser = this.getStoredUser();
     
     this.currentUserSubject = new BehaviorSubject<UserInfo | null>(storedUser);
     this.currentUser = this.currentUserSubject.asObservable();
 
-    // Setup request interceptor
     this.setupAxiosInterceptors();
   }
 
@@ -50,7 +48,6 @@ export class AuthService {
   }
 
   private setupAxiosInterceptors() {
-    // Add a request interceptor
     this.axiosInstance.interceptors.request.use(
       config => {
         const token = this.getToken();
@@ -64,13 +61,11 @@ export class AuthService {
       }
     );
 
-    // Add a response interceptor
     this.axiosInstance.interceptors.response.use(
       response => response,
       async error => {
         const originalRequest = error.config;
 
-        // If the error is due to an expired token and we haven't retried yet
         if (error.response?.status === 401 && !originalRequest._retry) {
           originalRequest._retry = true;
           try {
@@ -108,15 +103,14 @@ export class AuthService {
       password 
     })
     .then(response => {
-      const { token, refreshToken } = response.data;
+      const { token, refreshToken, role } = response.data;
 
-      // Store tokens in localStorage
       if (isPlatformBrowser(this.platformId)) {
         localStorage.setItem('token', token);
         localStorage.setItem('refreshToken', refreshToken);
+        localStorage.setItem('role', role);
       }
 
-      // Decode and set current user
       const userInfo = this.decodeToken(token);
       this.currentUserSubject.next(userInfo);
 
@@ -125,13 +119,12 @@ export class AuthService {
   }
 
   logout() {
-    // Clear tokens from localStorage
     if (isPlatformBrowser(this.platformId)) {
       localStorage.removeItem('token');
       localStorage.removeItem('refreshToken');
+      localStorage.removeItem('role');
     }
 
-    // Reset current user
     this.currentUserSubject.next(null);
   }
 
@@ -155,13 +148,12 @@ export class AuthService {
     }
 
     try {
-      const response = await axios.post('http://your-backend-api.com/refresh-token', {
+      const response = await axios.post('http://localhost:8080/auth/refresh', {
         refreshToken
       });
 
       const { token: newToken } = response.data;
 
-      // Store new token
       if (isPlatformBrowser(this.platformId)) {
         localStorage.setItem('token', newToken);
       }
@@ -173,12 +165,10 @@ export class AuthService {
     }
   }
 
-  // Getter for current user
   public get currentUserValue(): UserInfo | null {
     return this.currentUserSubject.value;
   }
 
-  // Method to get axios instance with interceptors
   public getAxiosInstance(): AxiosInstance {
     return this.axiosInstance;
   }

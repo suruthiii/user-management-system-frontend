@@ -8,18 +8,16 @@ import { UserService } from '../../services/user.service';
   selector: 'app-user-form',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './user-form.component.html',
-  styleUrls: ['./user-form.component.css'],
+  templateUrl: './user-form.component.html'
 })
 export class UserFormComponent implements OnInit {
-  // When defining the user object
   user = {
     id: 0,
     name: '',
     email: '',
     password: '',
     phoneNumber: '',
-    gender: 'MALE' as 'MALE' | 'FEMALE', // Ensure gender is strictly "MALE" | "FEMALE"
+    gender: 'MALE' as 'MALE' | 'FEMALE',
     dateOfBirth: '',
     status: 'ACTIVE' as 'ACTIVE' | 'PENDING',
     userRoleId: 1,
@@ -27,6 +25,7 @@ export class UserFormComponent implements OnInit {
   };
 
   isEdit: boolean = false;
+  errorMessage: string = '';
 
   constructor(
     private userService: UserService,
@@ -46,17 +45,17 @@ export class UserFormComponent implements OnInit {
             id: userData.id,
             name: userData.name,
             email: userData.email,
-            password: '', // Keep password empty for security reasons
+            password: '',
             phoneNumber: userData.phoneNumber,
             gender: userData.gender,
             dateOfBirth: userData.dateOfBirth,
             status: userData.status,
-            userRoleId: userData.userRole.id, // Assuming userRoleId is required
-            userRole: userData.userRole, // Map the entire userRole object
+            userRoleId: userData.userRole.id,
+            userRole: userData.userRole,
           };
         })
         .catch((error) => {
-          console.error('Error loading user data', error);
+          this.errorMessage = error;
         });
     }
   }
@@ -71,30 +70,42 @@ export class UserFormComponent implements OnInit {
       gender:
         this.user.gender === 'MALE' || this.user.gender === 'FEMALE'
           ? this.user.gender
-          : 'MALE', // Default to "MALE" if invalid
+          : 'MALE',
       dateOfBirth: this.user.dateOfBirth,
       status:
         this.user.status === 'ACTIVE' || this.user.status === 'PENDING'
           ? this.user.status
-          : 'ACTIVE', // Default to "ACTIVE" if invalid
+          : 'ACTIVE',
       userRoleId: this.user.userRoleId,
       userRole: this.user.userRole,
     };
-
+  
     if (this.isEdit) {
       this.userService
         .updateUser(this.user.id, requestPayload)
-        .then(() => this.router.navigate(['/users']))
+        .then((response) => {
+          if (response.status === 409) {
+            this.errorMessage = "email error";
+          } else {
+            this.router.navigate(['/users']);
+          }
+        })
         .catch((error) => {
-          console.error('Error updating user', error);
+          this.errorMessage = 'An unexpected error occurred';
         });
     } else {
       this.userService
         .createUser(requestPayload)
-        .then(() => this.router.navigate(['/users']))
+        .then((response) => {
+          if (response.status === 409) {
+            this.errorMessage = "email error";
+          } else {
+            this.router.navigate(['/users']);
+          }
+        })
         .catch((error) => {
-          console.error('Error creating user', error);
+          this.errorMessage = 'An unexpected error occurred';
         });
     }
-  }
+  }  
 }
