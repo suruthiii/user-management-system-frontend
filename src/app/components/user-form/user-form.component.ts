@@ -67,45 +67,41 @@ export class UserFormComponent implements OnInit {
       email: this.user.email,
       password: this.user.password,
       phoneNumber: this.user.phoneNumber,
-      gender:
-        this.user.gender === 'MALE' || this.user.gender === 'FEMALE'
-          ? this.user.gender
-          : 'MALE',
+      gender: this.user.gender === 'MALE' || this.user.gender === 'FEMALE' ? this.user.gender : 'MALE',
       dateOfBirth: this.user.dateOfBirth,
-      status:
-        this.user.status === 'ACTIVE' || this.user.status === 'PENDING'
-          ? this.user.status
-          : 'ACTIVE',
+      status: this.user.status === 'ACTIVE' || this.user.status === 'PENDING' ? this.user.status : 'ACTIVE',
       userRoleId: this.user.userRoleId,
       userRole: this.user.userRole,
     };
+  
+    this.errorMessage = '';
   
     if (this.isEdit) {
       this.userService
         .updateUser(this.user.id, requestPayload)
         .then((response) => {
-          if (response.status === 409) {
-            this.errorMessage = "email error";
-          } else {
-            this.router.navigate(['/users']);
-          }
+          this.router.navigate(['/users']);
         })
         .catch((error) => {
-          this.errorMessage = 'An unexpected error occurred';
+          if (Array.isArray(error.response?.data)) {
+            this.errorMessage = error.response.data[0]?.message || 'An unexpected error occurred';
+          } else {
+            this.errorMessage = error.response?.data || 'An unexpected error occurred';
+          }
         });
     } else {
       this.userService
         .createUser(requestPayload)
         .then((response) => {
-          if (response.status === 409) {
-            this.errorMessage = "email error";
-          } else {
-            this.router.navigate(['/users']);
-          }
+          this.router.navigate(['/users']);
         })
         .catch((error) => {
-          this.errorMessage = 'An unexpected error occurred';
+          if (Array.isArray(error.response?.data)) {
+            this.errorMessage = error.response.data[0]?.message || 'An unexpected error occurred';
+          } else {
+            this.errorMessage = error.response?.data || 'An unexpected error occurred';
+          }
         });
     }
-  }  
+  }   
 }

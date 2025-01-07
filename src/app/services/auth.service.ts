@@ -9,6 +9,7 @@ interface LoginResponse {
   refreshToken: string;
   expirationTime: string;
   role: string;
+  permissions: string[];
 }
 
 interface UserInfo {
@@ -103,12 +104,13 @@ export class AuthService {
       password 
     })
     .then(response => {
-      const { token, refreshToken, role } = response.data;
+      const { token, refreshToken, role, permissions } = response.data;
 
       if (isPlatformBrowser(this.platformId)) {
         localStorage.setItem('token', token);
         localStorage.setItem('refreshToken', refreshToken);
         localStorage.setItem('role', role);
+        localStorage.setItem('permissions', JSON.stringify(permissions));
       }
 
       const userInfo = this.decodeToken(token);
@@ -123,6 +125,7 @@ export class AuthService {
       localStorage.removeItem('token');
       localStorage.removeItem('refreshToken');
       localStorage.removeItem('role');
+      localStorage.removeItem('permissions');
     }
 
     this.currentUserSubject.next(null);

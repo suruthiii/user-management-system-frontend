@@ -11,6 +11,7 @@
 
   <div class="mb-4">
     <button 
+    *ngIf="hasPermission('CREATE')"
       class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded shadow"
       (click)="onAddUser()">
       Add New User
@@ -45,17 +46,19 @@
           <td class="py-3 px-6">
             <div class="flex space-x-2">
               <button 
+                *ngIf="hasPermission('UPDATE')"
                 class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold text-xs py-2 px-4 rounded shadow"
                 (click)="onEditUser(user.id)">
                 Edit
               </button>
               <button 
+                *ngIf="hasPermission('DELETE')"
                 class="bg-red-500 hover:bg-red-600 text-white font-semibold text-xs py-2 px-4 rounded shadow"
                 (click)="onDeleteUser(user.id)">
                 Delete
               </button>
             </div>
-          </td>
+          </td>          
         </tr>
       </tbody>
     </table>

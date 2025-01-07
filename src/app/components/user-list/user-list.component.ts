@@ -13,6 +13,7 @@ import { User } from '../../models/user.model';
 })
 export class UserListComponent implements OnInit {
   users: User[] = [];
+  permissions: string[] = [];
 
   constructor(
     private userService: UserService,
@@ -22,6 +23,7 @@ export class UserListComponent implements OnInit {
 
   ngOnInit() {
     this.loadUsers();
+    this.loadPermissions();
   }
 
   loadUsers() {
@@ -32,6 +34,17 @@ export class UserListComponent implements OnInit {
       .catch(error => {
         console.error('Error loading users', error);
       });
+  }
+
+  loadPermissions() {
+    const storedPermissions = localStorage.getItem('permissions');
+    if (storedPermissions) {
+      this.permissions = JSON.parse(storedPermissions);
+    }
+  }
+
+  hasPermission(permission: string): boolean {
+    return this.permissions.includes(permission);
   }
 
   onAddUser() {
